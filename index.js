@@ -1,4 +1,6 @@
-require('dotenv').config()
+if(!process.env.HEROKU){
+  require('dotenv').config()
+}
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const axios = require('axios')
