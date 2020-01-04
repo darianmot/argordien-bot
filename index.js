@@ -1,6 +1,4 @@
-if(!process.env.HEROKU){
-  require('dotenv').config()
-}
+require('dotenv').config({ silent: process.env.NODE_ENV === 'production' })
 const Discord = require('discord.js')
 const client = new Discord.Client()
 const axios = require('axios')
