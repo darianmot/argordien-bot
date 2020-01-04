@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-	"discord":"11.5.1",
+	"discord":"*",
 	"cheerio":"1.0.0-rc.3",
 	"axios":"0.19.0"
   },
