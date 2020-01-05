@@ -11,12 +11,12 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
-  if (msg.content.startsWith(config.prefix+'argordien')) {
+  if (msg.content.startsWith(config.prefix+config.command)) {
 	const args = msg.content.slice(1).split(' ');
   	if (args.length !== 2) {
-		return msg.channel.send(`Syntaxe : /argordien [abreviation]`);
+		return msg.channel.send("Usage : "+config.prefix+config.command + " [abreviation]");
 	}
- 
+
 	axios({
 	    method: 'post',
 	    url: 'https://argordien.azurewebsites.net/index.php',
@@ -29,13 +29,13 @@ client.on('message', msg => {
 		const description = $('.message').text()
 		var output = description;
 		if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
-		    console.log(output)
 		    output = `Abreviation non trouvée :cry:`
 		}
 		msg.channel.send(output);
 	    })
 	    .catch(function (response) {
 		//handle error
+    msg.channel.send("Error :x:");
 		console.log(response);
 	    });
   }
