@@ -32,6 +32,7 @@ client.on('message', msg => {
 		}
     var isEmpty = true
     var typeOK = false
+    var inText = false
     var output = ""
     $('.message').contents().each(function() {
 	     if ($(this).is('strong')){
@@ -40,17 +41,18 @@ client.on('message', msg => {
          }
          isEmpty = false
          typeOK = false
+         inText = false
          output += "**" + $(this).text().trim() + "**" + "\n"
        }
        if ($(this).is('em') && !typeOK) {
         output += "*" + $(this).text().trim() + "*" + "\n"
         typeOK = true
        }
-       if ($(this).is('em') && typeOK) {
+       if ($(this).is('em') && inText) {
         output += " " + $(this).text() + " ";
        }
        if ($(this)[0].type === "text" && $(this).text().trim().length > 1) {
-        console.log("text");
+        inText = true
         output +=$(this).text().trim()
        }
     });
