@@ -56,6 +56,9 @@ client.on('message', msg => {
         output +=$(this).text().trim()
        }
     });
+    if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
+		    output = `Abreviation non trouvée :cry:`
+		}
     msg.channel.send(output);
 	    })
 	    .catch(function (response) {
