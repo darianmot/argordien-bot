@@ -27,11 +27,34 @@ client.on('message', msg => {
 		parse(response);
 		const $ = cheerio.load(response.data)
 		const description = $('.message').text()
-		var output = description;
 		if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
 		    output = `Abreviation non trouvée :cry:`
 		}
-		msg.channel.send(output);
+    var isEmpty = true
+    var typeOK = false
+    var output = ""
+    $('.message').contents().each(function() {
+	     if ($(this).is('strong')){
+         if (!isEmpty){
+           output+="\n\n"
+         }
+         isEmpty = false
+         typeOK = false
+         output += "**" + $(this).text().trim() + "**" + "\n"
+       }
+       if ($(this).is('em') && !typeOK) {
+        output += "*" + $(this).text().trim() + "*" + "\n"
+        typeOK = true
+       }
+       if ($(this).is('em') && typeOK) {
+        output += " " + $(this).text() + " ";
+       }
+       if ($(this)[0].type === "text" && $(this).text().trim().length > 1) {
+        console.log("text");
+        output +=$(this).text().trim()
+       }
+    });
+    msg.channel.send(output);
 	    })
 	    .catch(function (response) {
 		//handle error
