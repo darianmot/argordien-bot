@@ -1,4 +1,6 @@
 {
 	"prefix": "/",
-	"command": "argordien"
+	"command": "argordien",
+	"command_object": "objet",
+	"max_object_messages": 3
 }

@@ -5,13 +5,16 @@ const axios = require('axios')
 const cheerio = require('cheerio');
 const config = require('./config.json');
 const { parse } = require('querystring');
+const iconv = require('iconv');
+const bbh_objects = require('./bbh_objects');
+const request = require('request');
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
 })
 
 client.on('message', msg => {
-  if (msg.content.startsWith(config.prefix+config.command)) {
+  if (msg.content.startsWith(config.prefix + config.command)) {
 	const args = msg.content.slice(1).split(' ');
   	if (args.length !== 2) {
 		return msg.channel.send("Usage : "+config.prefix+config.command + " [abreviation]");
@@ -66,6 +69,46 @@ client.on('message', msg => {
     msg.channel.send("Error :x:");
 		console.log(response);
 	    });
+  }
+  if (msg.content.startsWith(config.prefix + config.command_object + ' ')) {
+	const args = msg.content.slice(1).split(' ');
+  	if (args.length < 1) {
+		return msg.channel.send("Usage : "+config.prefix + config.command_object +
+    " [un objet]");
+  };
+  const s = msg.content.slice(config.prefix.length +
+    config.command_object.length).trim().split(' ').join('+') //search
+  request({
+    method: 'GET',
+    uri: 'http://bbh.fred26.fr/?pg=objets&s=' + s,
+    encoding: null,
+  },
+  function (error, response, body) {
+     if (error !== 'null') {
+       var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
+       var buf = ic.convert(body);
+       var data = buf.toString('utf-8');
+       const $ = cheerio.load(data);
+       const item_nodes = $(".item");
+       if (item_nodes.length === 0 ){
+         msg.channel.send("Wtf ? :thinking:");
+       }
+       else {
+         var output_message = ""
+         for(var i = 0; i <  item_nodes.length;i++){
+           var item = bbh_objects.parse_item(item_nodes.eq(i));
+           if (i < config.max_object_messages){
+             output_message = ">>> " + bbh_objects.render_item(item) + "\n";
+             msg.channel.send(output_message);
+           }
+         }
+       }
+     }
+     else {
+        msg.channel.send("Error :x:");
+    		console.log(error);
+     }
+   })
   }
 })
 
