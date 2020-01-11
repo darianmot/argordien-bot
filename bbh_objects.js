@@ -27,9 +27,6 @@ module.exports = {
     return item
   },
   render_item: function(item) {
-  //  var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
-    /*var buf = ic.convert(body);
-    var utf8String = buf.toString('utf-8');*/
     var output = "";
     // name
     output += "**" + item.name.text().trim() + "**" + "\n";
@@ -61,5 +58,8 @@ module.exports = {
     //ic.convert(output);
     //return output.toString('utf-8')
     return output
+  },
+  get_item_name : function(item) {
+    return item.name.contents()['1'].data.trim();
   }
 };

@@ -56,7 +56,7 @@ client.on('message', msg => {
        }
        if ($(this)[0].type === "text" && $(this).text().trim().length > 1) {
         inText = true
-        output +=$(this).text().trim()
+        output += $(this).text().trim()
        }
     });
     if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
@@ -94,13 +94,22 @@ client.on('message', msg => {
          msg.channel.send("Wtf ? :thinking:");
        }
        else {
-         var output_message = ""
+         var output_message = "";
+         var residual_objects = ">>> **Autres objets** : "
+         var residual_objects_flag = false;
          for(var i = 0; i <  item_nodes.length;i++){
            var item = bbh_objects.parse_item(item_nodes.eq(i));
            if (i < config.max_object_messages){
              output_message = ">>> " + bbh_objects.render_item(item) + "\n";
              msg.channel.send(output_message);
+           } else {
+             residual_objects_flag = true
+             residual_objects += "*" + bbh_objects.get_item_name(item) + "*, ";
            }
+         }
+         if (residual_objects_flag){
+           residual_objects = residual_objects.slice(0, -2); 
+            msg.channel.send(residual_objects);
          }
        }
      }
