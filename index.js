@@ -14,6 +14,11 @@ client.on('ready', () => {
 })
 
 client.on('message', msg => {
+
+  // Ignoring bot messages
+  if(msg.author.bot) return;
+
+  // Argo command
   if (msg.content.startsWith(config.prefix + config.command)) {
 	const args = msg.content.slice(1).split(' ');
   	if (args.length !== 2) {
@@ -70,6 +75,8 @@ client.on('message', msg => {
 		console.log(response);
 	    });
   }
+
+  // Object command
   if (msg.content.startsWith(config.prefix + config.command_object + ' ')) {
 	const args = msg.content.slice(1).split(' ');
   	if (args.length < 1) {
@@ -108,7 +115,7 @@ client.on('message', msg => {
            }
          }
          if (residual_objects_flag){
-           residual_objects = residual_objects.slice(0, -2); 
+            residual_objects = residual_objects.slice(0, -2);
             msg.channel.send(residual_objects);
          }
        }
@@ -118,6 +125,14 @@ client.on('message', msg => {
     		console.log(error);
      }
    })
+  }
+
+  // Handle bot mention
+  if (msg.isMemberMentioned(client.user) && !msg.mentions.everyone) {
+    var mention_message = "**Commandes : **\n"
+    mention_message += config.prefix + config.command + " [abbreviation]\n"
+    mention_message += config.prefix + config.command_object + " [objet]"
+    msg.channel.send(mention_message);
   }
 })
 
