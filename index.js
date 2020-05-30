@@ -35,9 +35,6 @@ client.on('message', msg => {
 		parse(response);
 		const $ = cheerio.load(response.data)
 		const description = $('.message').text()
-		if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
-		    output = `Abreviation non trouvée :cry:`
-		}
     var isEmpty = true
     var typeOK = false
     var inText = false
@@ -65,7 +62,7 @@ client.on('message', msg => {
        }
     });
     if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
-		    output = `Abreviation non trouvée :cry:`
+		    output = `Abbreviation non trouvée :cry:`
 		}
     msg.channel.send(output);
 	    })
@@ -98,7 +95,7 @@ client.on('message', msg => {
        const $ = cheerio.load(data);
        const item_nodes = $(".item");
        if (item_nodes.length === 0 ){
-         msg.channel.send("Wtf ? :thinking:");
+         msg.channel.send("Objet non trouvé :cry:");
        }
        else {
          var output_message = "";
