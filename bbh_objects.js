@@ -58,7 +58,6 @@ module.exports = {
     return output
   },
   get_item_name : function(item) {
-    //return item.name.contents()['1'].data.trim();
     return item.name.text().trim();
   }
 };
