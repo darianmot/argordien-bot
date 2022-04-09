@@ -9,9 +9,7 @@ module.exports = {
       actions: []
     };
     const nameNode = item_node.find('p');
-    const descriptionNode = item_node.contents().filter(function(i, el) {
-      return el.type === "text" ;
-    }).eq(2)
+    const descriptionNode = item_node.find('span');
     item.name = nameNode;
     item.description = descriptionNode;
     item_node.find('ul').children().each(function (i, el){
@@ -42,10 +40,12 @@ module.exports = {
       act.children.forEach(function(node){
         if (node.type === "tag") {
           if (node.name === "a") {
-            output += node.children[0].attribs.alt;
+            output += node.children[0].attribs.title;
           }
           if (node.name === "img") {
-            output += node.attribs.alt;
+            if (node.attribs.title !== undefined) {
+              output += node.attribs.title;
+            }
           }
         }
         if (node.type === "text") {
@@ -55,11 +55,10 @@ module.exports = {
       output += "\n";
     });
     output += "\n\n";
-    //ic.convert(output);
-    //return output.toString('utf-8')
     return output
   },
   get_item_name : function(item) {
-    return item.name.contents()['1'].data.trim();
+    //return item.name.contents()['1'].data.trim();
+    return item.name.text().trim();
   }
 };

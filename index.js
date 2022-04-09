@@ -1,6 +1,6 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv').config()
 const Discord = require('discord.js')
-const client = new Discord.Client()
+const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const axios = require('axios')
 const cheerio = require('cheerio');
 const config = require('./config.json');
@@ -13,7 +13,7 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
 })
 
-client.on('message', msg => {
+client.on('messageCreate', msg => {
 
   // Ignoring bot messages
   if(msg.author.bot) return;
@@ -89,9 +89,10 @@ client.on('message', msg => {
   },
   function (error, response, body) {
      if (error !== 'null') {
-       var ic = new iconv.Iconv('iso-8859-1', 'utf-8');
-       var buf = ic.convert(body);
-       var data = buf.toString('utf-8');
+       // var ic = new iconv.Iconv('utf-8', 'utf-8');
+       // var buf = ic.convert(body);
+       // var data = buf.toString(); // NO encoding necessary anymore
+       var data = body.toString();
        const $ = cheerio.load(data);
        const item_nodes = $(".item");
        if (item_nodes.length === 0 ){
@@ -125,7 +126,7 @@ client.on('message', msg => {
   }
 
   // Handle bot mention
-  if (msg.isMemberMentioned(client.user) && !msg.mentions.everyone) {
+  if (msg.mentions.has(client.user.id) && !msg.mentions.everyone) {
     var mention_message = "**Commandes : **\n"
     mention_message += config.prefix + config.command + " [abbreviation]\n"
     mention_message += config.prefix + config.command_object + " [objet]"
@@ -133,4 +134,4 @@ client.on('message', msg => {
   }
 })
 
-client.login();
+client.login(process.env.CLIENT_TOKEN);
