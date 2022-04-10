@@ -9,10 +9,27 @@ const { parse } = require('querystring');
 const bbh_objects = require('./bbh_objects');
 const request = require('request');
 
+// Update argo data
+var language = 'fr'
+var argo_data_fr = JSON.parse('{}');
+let argo_data_url = "https://argordien.dev.ctruillet.eu/data_" + language
++ ".json";
+axios.get(argo_data_url)
+  .then((response) => {
+    argo_data_fr = response.data['data'];
+  })
+  .catch((response) => {
+    console.log(error);
+  });
+
+
+
+// Setup bot
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
 })
 
+// Handle message response
 client.on('messageCreate', msg => {
 
   // Ignoring bot messages
@@ -20,58 +37,30 @@ client.on('messageCreate', msg => {
 
   // Argo command
   if (msg.content.startsWith(config.prefix + config.command)) {
-	const args = msg.content.slice(1).split(' ');
-  	if (args.length !== 2) {
-		return msg.channel.send("Usage : "+config.prefix+config.command + " [abreviation]");
-	}
+  	const args = msg.content.slice(1).split(' ');
+    	if (args.length !== 2) {
+  		return msg.channel.send("Usage : "+config.prefix+config.command + " [abreviation]");
+  	}
+    var input = args[1].toLowerCase().trim();
+    var output = "";
+    for(var i=0; i<argo_data_fr.length ; i++){
+      if(argo_data_fr[i].word.toLowerCase() === input){
+        if (output.length === 0) {
+          output = ">>> ";
+        }
+        output += "**" + argo_data_fr[i].meaning + " : **" +
+        argo_data_fr[i].description + "\n";
+      }
+    }
+    // If no abreviation found
+    if (output.length === 0){
+        output = `Abbreviation non trouvée :cry:`
+    }
 
-	axios({
-	    method: 'post',
-	    url: 'https://argordien.azurewebsites.net/index.php',
-	    data: 'message='.concat('', args[1]),
-	    })
-	    .then(function (response) {
-		//handle success
-		parse(response);
-		const $ = cheerio.load(response.data)
-		const description = $('.message').text()
-    var isEmpty = true
-    var typeOK = false
-    var inText = false
-    var output = ""
-    $('.message').contents().each(function() {
-	     if ($(this).is('strong')){
-         if (!isEmpty){
-           output+="\n\n"
-         }
-         isEmpty = false
-         typeOK = false
-         inText = false
-         output += "**" + $(this).text().trim() + "**" + "\n"
-       }
-       if ($(this).is('em') && !typeOK) {
-        output += "*" + $(this).text().trim() + "*" + "\n"
-        typeOK = true
-       }
-       if ($(this).is('em') && inText) {
-        output += " " + $(this).text() + " ";
-       }
-       if ($(this)[0].type === "text" && $(this).text().trim().length > 1) {
-        inText = true
-        output += $(this).text().trim()
-       }
-    });
-    if (description.toLowerCase().trim() === args[1].toLowerCase().trim()){
-		    output = `Abbreviation non trouvée :cry:`
-		}
+    // Send output message
     msg.channel.send(output);
-	    })
-	    .catch(function (response) {
-		//handle error
-    msg.channel.send("Error :x:");
-		console.log(response);
-	    });
   }
+
 
   // Object command
   if (msg.content.startsWith(config.prefix + config.command_object + ' ')) {
